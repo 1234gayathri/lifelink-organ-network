@@ -75,7 +75,7 @@ export default function Login({ onNavigate, onLogin }) {
 
     try {
       // First verify password with backend
-      const response = await fetch('http://localhost:5000/api/auth/hospital/login', {
+      const response = await fetch('https://lifelink-organ-network.onrender.com/api/auth/hospital/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -100,7 +100,7 @@ export default function Login({ onNavigate, onLogin }) {
       // Password correct! Save token temporarily and send OTP
       setSavedToken(data.token);
 
-      const otpRes = await fetch('http://localhost:5000/api/auth/otp/send', {
+      const otpRes = await fetch('https://lifelink-organ-network.onrender.com/api/auth/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, purpose: 'login' })
@@ -128,7 +128,7 @@ export default function Login({ onNavigate, onLogin }) {
     setOtpError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/otp/verify', {
+      const response = await fetch('https://lifelink-organ-network.onrender.com/api/auth/otp/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, code: otpCode, purpose: 'login' })
@@ -157,7 +157,7 @@ export default function Login({ onNavigate, onLogin }) {
     setOtpSending(true);
     setOtpError('');
     try {
-      await fetch('http://localhost:5000/api/auth/otp/send', {
+      await fetch('https://lifelink-organ-network.onrender.com/api/auth/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, purpose: 'login' })
@@ -426,7 +426,7 @@ export default function Login({ onNavigate, onLogin }) {
               }
               setForgotLoading(true);
               try {
-                const res = await fetch('http://localhost:5000/api/auth/forgot-password', {
+                const res = await fetch('https://lifelink-organ-network.onrender.com/api/auth/forgot-password', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ hospitalId: forgotHospitalId, officialEmail: forgotEmail })

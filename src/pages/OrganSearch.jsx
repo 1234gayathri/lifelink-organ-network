@@ -68,7 +68,7 @@ export default function OrganSearch({ onNavigate, organs, user = {} }) {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/requests', {
+      const response = await fetch('https://lifelink-organ-network.onrender.com/api/requests', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export default function OrganSearch({ onNavigate, organs, user = {} }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/organs/${organ.id_full || organ.id}/notify`, {
+      const response = await fetch(`https://lifelink-organ-network.onrender.com/api/organs/${organ.id_full || organ.id}/notify`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

@@ -100,16 +100,16 @@ export default function App() {
 
       try {
         const responses = await Promise.all([
-          fetch('http://localhost:5000/api/notifications', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/transports/my', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/certificates/my', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/organs', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/organs/stats', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/requests/incoming', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/requests/outgoing', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/alerts', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5000/api/chat/unread-count', { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch('https://lifelink-organ-network.onrender.com/api/notifications', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/transports/my', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/certificates/my', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/organs', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/organs/stats', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/requests/incoming', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/requests/outgoing', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/alerts', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('https://lifelink-organ-network.onrender.com/api/chat/unread-count', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
 
         if (responses.some(r => r.status === 401)) {

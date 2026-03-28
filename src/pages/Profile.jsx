@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Settings, Shield, Bell, Lock, User, CheckCircle, Edit2, Save, AlertCircle, Loader } from 'lucide-react';
 import { useToast, ToastContainer } from '../components/Toast';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://lifelink-organ-network.onrender.com/api';
 
 export default function Profile({ user = {} }) {
   const [tab, setTab] = useState('details');

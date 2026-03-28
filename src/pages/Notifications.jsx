@@ -43,7 +43,7 @@ export default function Notifications({ notifications: notifs = [], setNotificat
 
   const markAllRead = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/notifications/read-all', {
+      const res = await fetch('https://lifelink-organ-network.onrender.com/api/notifications/read-all', {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
@@ -57,7 +57,7 @@ export default function Notifications({ notifications: notifs = [], setNotificat
 
   const markRead = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/notifications/${id}/read`, {
+      const res = await fetch(`https://lifelink-organ-network.onrender.com/api/notifications/${id}/read`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });

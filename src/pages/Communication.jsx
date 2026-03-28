@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, Mail, Send, Paperclip, Shield, Search, CheckCheck, X, User, AlertCircle, Loader } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://lifelink-organ-network.onrender.com/api';
 
 export default function Communication({ user, activeChatId, setActiveChatId }) {
   const [tab, setTab] = useState('chat');

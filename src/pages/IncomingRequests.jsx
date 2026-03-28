@@ -39,7 +39,7 @@ export default function IncomingRequests({ onNavigate, requests: globalRequests 
     const token = localStorage.getItem('token');
 
     try {
-      const res = await fetch(`http://localhost:5000/api/requests/${id}/status`, {
+      const res = await fetch(`https://lifelink-organ-network.onrender.com/api/requests/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

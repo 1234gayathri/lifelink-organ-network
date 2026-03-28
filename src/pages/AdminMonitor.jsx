@@ -10,7 +10,7 @@ export default function AdminMonitor() {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/auth/monitor', {
+        const res = await fetch('https://lifelink-organ-network.onrender.com/api/auth/monitor', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const d = await res.json();

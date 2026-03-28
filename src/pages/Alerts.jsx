@@ -32,7 +32,7 @@ export default function Alerts({ alerts = [], setAlerts, user = {} }) {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/alerts', {
+      const response = await fetch('https://lifelink-organ-network.onrender.com/api/alerts', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

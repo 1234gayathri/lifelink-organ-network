@@ -53,7 +53,7 @@ export default function TransportTracking({ transportRecords = [], setTransportR
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/transports/${record.id}/checkpoint`, {
+      const res = await fetch(`https://lifelink-organ-network.onrender.com/api/transports/${record.id}/checkpoint`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export default function TransportTracking({ transportRecords = [], setTransportR
     const allDone = newCheckpoints.every(cp => cp.done);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/transports/${record.id}/checkpoint`, {
+      const res = await fetch(`https://lifelink-organ-network.onrender.com/api/transports/${record.id}/checkpoint`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

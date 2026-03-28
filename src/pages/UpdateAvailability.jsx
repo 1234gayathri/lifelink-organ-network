@@ -62,7 +62,7 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
     
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:5000/api/organs', {
+      const response = await fetch('https://lifelink-organ-network.onrender.com/api/organs', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
