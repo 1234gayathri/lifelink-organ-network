@@ -39,7 +39,7 @@ export default function Sidebar({ currentPage, onNavigate, collapsed, onToggle, 
   const navItems = NAV_ITEMS(badges);
 
   return (
-    <aside className={`sidebar${collapsed ? ' collapsed' : ''}`}>
+    <aside className={`sidebar${collapsed ? ' collapsed' : ' mobile-open'}`}>
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">
           <Heart size={18} color="#fff" />

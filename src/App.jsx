@@ -78,7 +78,7 @@ export default function App() {
     }
     return !!localStorage.getItem('token');
   });
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.innerWidth < 768);
   const [stats, setStats] = useState({ totalOrgans: 0, totalHospitals: 1, activeAlerts: 0 });
   const [currentUser, setCurrentUser] = useState({ id: 'HOSP-001', name: 'Apollo Medical Systems' });
   const [darkMode, setDarkMode] = useState(() => {
