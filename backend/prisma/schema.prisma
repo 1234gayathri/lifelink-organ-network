@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Hospital {
+  id                 String             @id @default(uuid())
+  hospitalName       String
+  hospitalId         String             @unique
+  officialEmail      String             @unique
+  contactPerson      String
+  phoneNumber        String
+  location           String
+  password           String
+  verificationStatus String             @default("pending")
+  accountStatus      String             @default("active")
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  resetPasswordToken String?
+  resetPasswordExpire DateTime?
+  sentAlerts         Alert[]            @relation("AlertCreator")
+  certificatesDest   DonorCertificate[] @relation("CertIssuedTo")
+  certificatesSource DonorCertificate[] @relation("CertSource")
+  notifications      Notification[]
+  organsUploaded     Organ[]            @relation("SourceHospital")
+  requestsSent       OrganRequest[]     @relation("RequestingHospital")
+  requestsReceived   OrganRequest[]     @relation("SourceHospital")
+  transportsDest     TransportRecord[]  @relation("TransportDest")
+  transportsSource   TransportRecord[]  @relation("TransportSource")
+  conversationsAsH1  Conversation[]     @relation("Hosp1Conversations")
+  conversationsAsH2  Conversation[]     @relation("Hosp2Conversations")
+  messagesSent       Message[]          @relation("SenderMessages")
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Organ {
+  id                  String             @id @default(uuid())
+  organType           String
+  bloodGroup          String
+  hlaType             String
+  donorAge            Int?
+  donorGender         String?
+  donorMedicalDetails String?
+  donorName           String?
+  donorGovtId         String?
+  donorContact        String?
+  familyName          String?
+  familyContact       String?
+  extractionTime      DateTime
+  maxStorageMinutes   Int
+  expiryTime          DateTime
+  status              String             @default("available")
+  notes               String?
+  sourceHospitalId    String
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  certificates        DonorCertificate[]
+  sourceHospital      Hospital           @relation("SourceHospital", fields: [sourceHospitalId], references: [id])
+  requests            OrganRequest[]
+  transports          TransportRecord[]
+}
+
+model OrganRequest {
+  id                   String            @id @default(uuid())
+  organId              String
+  sourceHospitalId     String
+  requestingHospitalId String
+  urgencyLevel         String
+  patientBloodGroup    String
+  patientHlaType       String
+  patientAge           Int?
+  compatibilitySummary String?
+  compatibilityScore   Int?
+  doctorNotes          String?
+  caseSummary          String?
+  status               String            @default("sent")
+  rejectionReason      String?
+  requestedAt          DateTime          @default(now())
+  respondedAt          DateTime?
+  approvedAt           DateTime?
+  deliveredAt          DateTime?
+  completedAt          DateTime?
+  certificate          DonorCertificate?
+  organ                Organ             @relation(fields: [organId], references: [id])
+  requestingHospital   Hospital          @relation("RequestingHospital", fields: [requestingHospitalId], references: [id])
+  sourceHospital       Hospital          @relation("SourceHospital", fields: [sourceHospitalId], references: [id])
+  transportRecord      TransportRecord?
+}
+
+model Alert {
+  id                  String   @id @default(uuid())
+  createdByHospitalId String
+  requiredOrgan       String
+  urgencyLevel        String
+  gender              String?
+  age                 Int?
+  hlaType             String
+  bloodGroup          String
+  medicalNotes        String?
+  status              String   @default("active")
+  createdAt           DateTime @default(now())
+  expiresAt           DateTime
+  hospital            Hospital @relation("AlertCreator", fields: [createdByHospitalId], references: [id])
+}
+
+model Notification {
+  id                String   @id @default(uuid())
+  hospitalId        String
+  type              String
+  title             String
+  message           String
+  relatedEntityType String?
+  relatedEntityId   String?
+  priority          String   @default("normal")
+  isRead            Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  hospital          Hospital @relation(fields: [hospitalId], references: [id])
+}
+
+model TransportRecord {
+  id                    String       @id @default(uuid())
+  requestId             String       @unique
+  organId               String
+  sourceHospitalId      String
+  destinationHospitalId String
+  departureTime         DateTime?
+  currentLatitude       Float?
+  currentLongitude      Float?
+  destinationLatitude   Float?
+  destinationLongitude  Float?
+  totalDistanceKm       Float?
+  remainingDistanceKm   Float?
+  estimatedArrivalTime  DateTime?
+  status                String       @default("pending")
+  organConditionStatus  String?
+  transporterName       String?
+  transporterContact    String?
+  vehicleType           String?
+  pilotName             String?
+  emergencyContact      String?
+  checkpoints           Json?        // Array of {label, done, time}
+  updatedAt             DateTime     @updatedAt
+  destination           Hospital     @relation("TransportDest", fields: [destinationHospitalId], references: [id])
+  organ                 Organ        @relation(fields: [organId], references: [id])
+  request               OrganRequest @relation(fields: [requestId], references: [id])
+  source                Hospital     @relation("TransportSource", fields: [sourceHospitalId], references: [id])
+}
+
+model DonorCertificate {
+  id                 String       @id @default(uuid())
+  requestId          String       @unique
+  organId            String
+  sourceHospitalId   String
+  issuedToHospitalId String
+  organType          String
+  issuedAt           DateTime     @default(now())
+  certificateNumber  String       @unique
+  pdfUrl             String?
+  issuedTo           Hospital     @relation("CertIssuedTo", fields: [issuedToHospitalId], references: [id])
+  organ              Organ        @relation(fields: [organId], references: [id])
+  request            OrganRequest @relation(fields: [requestId], references: [id])
+  source             Hospital     @relation("CertSource", fields: [sourceHospitalId], references: [id])
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  purpose   String
+  verified  Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email, purpose])
+}
+
+model Conversation {
+  id          String   @id @default(uuid())
+  hospital1Id String
+  hospital2Id String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  hospital1   Hospital @relation("Hosp1Conversations", fields: [hospital1Id], references: [id])
+  hospital2   Hospital @relation("Hosp2Conversations", fields: [hospital2Id], references: [id])
+  messages    Message[]
+
+  @@unique([hospital1Id, hospital2Id])
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  senderId       String
+  content        String
+  isRead         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  sender         Hospital     @relation("SenderMessages", fields: [senderId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorUserId String
+  actorRole   String
+  action      String
+  entityType  String
+  entityId    String
+  metadata    String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+}
