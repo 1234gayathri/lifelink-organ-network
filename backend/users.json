@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1f38aa31-2b55-4fce-9d0e-e356d5774b06",
+    "hospitalName": "GAYATHRI HOSPITAL",
+    "hospitalId": "HOSP-GVP-001",
+    "officialEmail": "rakotisaigayathri@gmail.com",
+    "contactPerson": "Gayathri",
+    "phoneNumber": "9123456789",
+    "location": "Visakhapatnam, AP",
+    "password": "$2b$12$ikFsA3K9phx9uNUhN3oLZOLMpx4XUReo8xUDHHO8zWAM62GAeM6XG",
+    "verificationStatus": "active",
+    "accountStatus": "active",
+    "createdAt": "2026-03-27T21:15:07.187Z",
+    "updatedAt": "2026-03-27T21:15:07.187Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpire": null
+  },
+  {
+    "id": "8ee6b5d7-3ade-46b9-93f0-8ba8deaea133",
+    "hospitalName": "CHARISHMA MEDICAL CENTER",
+    "hospitalId": "HOSP-GVP-002",
+    "officialEmail": "saicharishmajoga@gmail.com",
+    "contactPerson": "Charishma",
+    "phoneNumber": "9123456788",
+    "location": "Visakhapatnam, AP",
+    "password": "$2b$12$R/ZNhVLYqif6.UNJVDFBeOMsyipAz6p/d9/CiO/nsBazo48jKYi.u",
+    "verificationStatus": "active",
+    "accountStatus": "active",
+    "createdAt": "2026-03-27T21:15:09.926Z",
+    "updatedAt": "2026-03-27T21:15:09.926Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpire": null
+  },
+  {
+    "id": "07d48414-32c5-4b10-bb53-73bbf6d1e131",
+    "hospitalName": "APOLLO MEDICAL CENTER",
+    "hospitalId": "HOSP-APL-001",
+    "officialEmail": "apollo_systems@med.org",
+    "contactPerson": "Dr. John Smith",
+    "phoneNumber": "9122334455",
+    "location": "Hyderabad, TS",
+    "password": "demo_password123",
+    "verificationStatus": "active",
+    "accountStatus": "active",
+    "createdAt": "2026-03-27T21:15:15.920Z",
+    "updatedAt": "2026-03-27T21:15:15.920Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpire": null
+  }
+]

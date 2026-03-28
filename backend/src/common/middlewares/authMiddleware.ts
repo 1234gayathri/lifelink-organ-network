@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppError } from './errorHandler';
 import prisma from '../../prisma';
+import { activeSessions } from './sessionManager';
 
 // Extend express Request interface
 declare global {
@@ -39,6 +40,14 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
     if (!currentUser) {
       return next(new AppError('The user belonging to this token does no longer exist.', 401));
+    }
+    
+    // Check if token matches active session (single device policy)
+    if (decoded.role === 'hospital') {
+      const activeToken = activeSessions.get(currentUser.id);
+      if (activeToken && activeToken !== token) {
+        return next(new AppError('Session expired. You logged in from another device.', 401));
+      }
     }
     
     // Check if hospital is suspended or pending

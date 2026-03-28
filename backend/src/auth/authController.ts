@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import prisma from '../prisma';
 import { AppError } from '../common/middlewares/errorHandler';
 import sendEmail from '../utils/sendEmail';
+import { activeSessions } from '../common/middlewares/sessionManager';
 
 const signToken = (id: string, role: string) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET || 'secret', {
@@ -65,6 +66,9 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         }
       }
     });
+    
+    // Register active session
+    activeSessions.set(newHospital.id, token);
   } catch (error) {
     next(error);
   }
@@ -116,6 +120,20 @@ export const loginHospital = async (req: Request, res: Response, next: NextFunct
     }
 
     const token = signToken(hospital.id, 'hospital');
+
+    if (activeSessions.has(hospital.id) && activeSessions.get(hospital.id) !== token) {
+      try {
+        await sendEmail({
+          email: hospital.officialEmail,
+          subject: 'Security Alert: New Device Login Detected',
+          message: `Your LifeLink account for ${hospital.hospitalName} was just logged into from a new device or browser session. If this was not authorized by you, please reset your password immediately inside the platform. Previous devices have been logged out automatically.`
+        });
+      } catch (err) {
+        console.error('Failed to send device alert email', err);
+      }
+    }
+    
+    activeSessions.set(hospital.id, token);
 
     res.status(200).json({
       status: 'success',

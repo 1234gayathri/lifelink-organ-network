@@ -1,0 +1,85 @@
+@media (max-width: 768px) {
+  .app-shell {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 260px !important;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    width: 100vw;
+  }
+
+  .main-content.sidebar-collapsed {
+    margin-left: 0 !important;
+  }
+
+  .navbar {
+    padding: 12px 16px;
+  }
+
+  .navbar-actions .avatar + div {
+    display: none !important;
+  }
+
+  .page-body {
+    padding: 16px !important;
+  }
+
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  /* Dashboard specific mobile fixes */
+  .request-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .request-actions {
+    width: 100%;
+    margin-top: 12px;
+    justify-content: space-between;
+  }
+  
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .organ-card {
+    width: 100%;
+  }
+
+  .hero-nav {
+    display: none;
+  }
+  
+  .hero-content {
+    padding: 20px 16px;
+  }
+
+  .feature-box {
+    margin-bottom: 16px;
+  }
+  
+  /* Auth forms mobile */
+  .login-card {
+    max-width: 100%;
+    margin: 16px;
+    padding: 24px 20px;
+  }
+}
