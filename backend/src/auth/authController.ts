@@ -119,20 +119,27 @@ export const loginHospital = async (req: Request, res: Response, next: NextFunct
       return next(new AppError('Hospital account is not active or suspended', 403));
     }
 
-    const token = signToken(hospital.id, 'hospital');
-
-    if (activeSessions.has(hospital.id) && activeSessions.get(hospital.id) !== token) {
+    // === SINGLE DEVICE POLICY ===
+    // If an active session already exists for this hospital, BLOCK the new login
+    if (activeSessions.has(hospital.id)) {
+      // Send security alert email to the hospital
       try {
         await sendEmail({
           email: hospital.officialEmail,
-          subject: 'Security Alert: New Device Login Detected',
-          message: `Your LifeLink account for ${hospital.hospitalName} was just logged into from a new device or browser session. If this was not authorized by you, please reset your password immediately inside the platform. Previous devices have been logged out automatically.`
+          subject: '⚠️ LifeLink Security Alert: Unauthorized Login Attempt Blocked',
+          message: `Dear ${hospital.hospitalName},\n\nA login attempt was made on your LifeLink account from a new device or browser, but it was BLOCKED because your account is already active on another device.\n\nIf this was not you, please immediately log out from your current device and reset your password.\n\nIf this was you, please log out from your current device first before logging in on another device.\n\nStay safe,\nLifeLink Security Team`
         });
       } catch (err) {
-        console.error('Failed to send device alert email', err);
+        console.error('Failed to send security alert email', err);
       }
+
+      return next(new AppError(
+        'This account is already logged in on another device. Simultaneous access is not permitted for security purposes. Please log out from the other device first.',
+        403
+      ));
     }
-    
+
+    const token = signToken(hospital.id, 'hospital');
     activeSessions.set(hospital.id, token);
 
     res.status(200).json({
@@ -187,6 +194,19 @@ export const getMe = async (req: Request, res: Response, next: NextFunction) => 
     }
   });
 };
+
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.id;
+    if (userId) {
+      activeSessions.delete(userId);
+    }
+    res.status(200).json({ status: 'success', message: 'Logged out successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
   try {

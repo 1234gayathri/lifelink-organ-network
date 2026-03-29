@@ -329,7 +329,18 @@ export default function App() {
     });
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch('https://lifelink-organ-network.onrender.com/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+    } catch (e) {
+      // Ignore errors - always log out locally
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('currentPage');
     setIsLoggedIn(false);

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { signup, loginHospital, loginAdmin, getMe, forgotPassword, resetPassword, getAdminStats } from './authController';
+import { signup, loginHospital, loginAdmin, getMe, logout, forgotPassword, resetPassword, getAdminStats } from './authController';
 import { sendOtp, verifyOtp } from './otpController';
 import { protect, restrictTo } from '../common/middlewares/authMiddleware';
 import { validate } from '../common/middlewares/validationMiddleware';
@@ -75,6 +75,9 @@ router.post('/aadhar/verify', protect, [
 
 // Me
 router.get('/me', protect, getMe);
+
+// Logout (clears single-device session)
+router.post('/logout', protect, logout);
 
 // Admin Monitoring (Live Data)
 router.get('/monitor', protect, restrictTo('admin'), getAdminStats);
