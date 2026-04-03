@@ -13,6 +13,12 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const { toasts, addToast } = useToast();
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000 * 30); // Update every 30s
+    return () => clearInterval(id);
+  }, []);
 
   const set = (k, v) => {
     setForm(prev => ({ ...prev, [k]: v }));
@@ -26,7 +32,7 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
     if (!form.donorAge || isNaN(Number(form.donorAge))) e.donorAge = 'Enter valid age';
     if (!form.donorGender) e.donorGender = 'Select gender';
     if (!form.extractedAt) e.extractedAt = 'Enter extraction date & time';
-    if (!form.storageLife || isNaN(Number(form.storageLife))) e.storageLife = 'Enter valid storage hours';
+    if (!form.storageLife || isNaN(Number(form.storageLife))) e.storageLife = 'Enter valid storage minutes';
     
     const aadharRegex = /^\d{12}$/;
     const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i;
@@ -81,7 +87,7 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
           familyContact: form.familyContact,
           donorMedicalDetails: `Aadhar/PAN: ${form.donorGovtId}, Contact: ${form.donorContact}`,
           extractionTime: new Date(form.extractedAt).toISOString(),
-          maxStorageMinutes: Number(form.storageLife) * 60,
+          maxStorageMinutes: Number(form.storageLife),
           notes: form.notes || 'No additional notes.'
         })
       });
@@ -96,7 +102,6 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
           id: o.id.split('-')[0] + '-' + o.id.split('-')[1].substring(0, 4).toUpperCase(),
           type: o.organType,
           extractedAt: o.extractionTime,
-          maxStorageHours: Math.floor(o.maxStorageMinutes / 60),
           donorGovtId: form.donorGovtId,
           donorContact: form.donorContact,
           sourceHospital: { id: user.id, name: user.name, location: user.location }
@@ -187,8 +192,8 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
                 {errors.extractedAt && <div className="form-error">{errors.extractedAt}</div>}
               </div>
               <div className="form-group">
-                <label className="form-label">Storage Life (hours) <span>*</span></label>
-                <input type="number" className={`form-input${errors.storageLife ? ' error' : ''}`} placeholder="e.g. 36" value={form.storageLife} onChange={e => set('storageLife', e.target.value)} min={1} max={500} />
+                <label className="form-label">Storage Life (minutes) <span>*</span></label>
+                <input type="number" className={`form-input${errors.storageLife ? ' error' : ''}`} placeholder="e.g. 1440" value={form.storageLife} onChange={e => set('storageLife', e.target.value)} min={1} max={30000} />
                 {errors.storageLife && <div className="form-error">{errors.storageLife}</div>}
               </div>
             </div>
@@ -247,21 +252,42 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
 
         {/* Currently available organs */}
         <div>
-          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Currently Available Organs ({organs.filter(o => o.status === 'available').length})</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {organs.map(organ => (
-              <div key={organ.id} className="card" style={{ padding: '14px 18px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                  <div>
-                    <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 15 }}>{organ.type}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{organ.bloodGroup} &bull; {organ.hlaType} &bull; {organ.donorGender}, {organ.donorAge}y</div>
-                  </div>
-                  <StatusChip status={organ.status} />
+          {(() => {
+            const availableOrgans = organs.filter(o => {
+              if (o.status !== 'available') return false;
+              const extracted = new Date(o.extractedAt).getTime();
+              const expiry = extracted + (o.maxStorageMinutes || 0) * 60000;
+              return expiry > now;
+            });
+
+            return (
+              <>
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>
+                  Currently Available Organs ({availableOrgans.length})
                 </div>
-                <CountdownTimer extractedAt={organ.extractedAt} maxStorageHours={organ.maxStorageHours} />
-              </div>
-            ))}
-          </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {availableOrgans.length === 0 ? (
+                    <div className="card" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
+                      No active organs currently listed.
+                    </div>
+                  ) : (
+                    availableOrgans.map(organ => (
+                      <div key={organ.id} className="card" style={{ padding: '14px 18px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                          <div>
+                            <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 15 }}>{organ.type}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{organ.bloodGroup} &bull; {organ.hlaType} &bull; {organ.donorGender}, {organ.donorAge}y</div>
+                          </div>
+                          <StatusChip status={organ.status} expiry={new Date(new Date(organ.extractedAt).getTime() + (organ.maxStorageMinutes || 0) * 60000)} />
+                        </div>
+                        <CountdownTimer extractedAt={organ.extractedAt} maxStorageMinutes={organ.maxStorageMinutes} />
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            );
+          })()}
         </div>
       </div>
 

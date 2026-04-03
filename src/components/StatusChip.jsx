@@ -1,4 +1,9 @@
-export default function StatusChip({ status }) {
+export default function StatusChip({ status, expiry }) {
+  let type = status;
+  if (status === 'available' && expiry && new Date(expiry).getTime() <= Date.now()) {
+    type = 'expired';
+  }
+
   const map = {
     available: { bg: '#dcfce7', color: '#166534', dot: '#22c55e', label: 'Available' },
     critical: { bg: '#fee2e2', color: '#991b1b', dot: '#ef4444', label: 'Critical' },
@@ -16,7 +21,7 @@ export default function StatusChip({ status }) {
     unavailable: { bg: '#fee2e2', color: '#991b1b', dot: '#ef4444', label: 'Organ Unavailable' },
   };
 
-  const cfg = map[status] || { bg: '#f3f4f6', color: '#4b5563', dot: '#9ca3af', label: status };
+  const cfg = map[type] || { bg: '#f3f4f6', color: '#4b5563', dot: '#9ca3af', label: type };
   return (
     <span style={{ 
       display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', 

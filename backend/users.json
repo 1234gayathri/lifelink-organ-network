@@ -46,5 +46,37 @@
     "updatedAt": "2026-03-27T21:15:15.920Z",
     "resetPasswordToken": null,
     "resetPasswordExpire": null
+  },
+  {
+    "id": "e4a2d3b4-5c6e-7a8b-9d0f-1a2b3c4d5e6f",
+    "hospitalName": "PRAVALLIKA GENERAL HOSPITAL",
+    "hospitalId": "HOSP-PVL-066",
+    "officialEmail": "pravallikaramu66@gmail.com",
+    "contactPerson": "Pravallika",
+    "phoneNumber": "9123456066",
+    "location": "Telangana, IN",
+    "password": "$2b$12$ikFsA3K9phx9uNUhN3oLZOLMpx4XUReo8xUDHHO8zWAM62GAeM6XG",
+    "verificationStatus": "active",
+    "accountStatus": "active",
+    "createdAt": "2026-04-03T16:00:00.000Z",
+    "updatedAt": "2026-04-03T16:00:00.000Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpire": null
+  },
+  {
+    "id": "f5b3e2d1-4c5b-6a7a-8d9e-2b3c4d5e6f7a",
+    "hospitalName": "KALPANA MEDICAL CENTER",
+    "hospitalId": "HOSP-KLP-088",
+    "officialEmail": "pittakalpana88@gmail.com",
+    "contactPerson": "Kalpana",
+    "phoneNumber": "9123456088",
+    "location": "Andhra Pradesh, IN",
+    "password": "$2b$12$ikFsA3K9phx9uNUhN3oLZOLMpx4XUReo8xUDHHO8zWAM62GAeM6XG",
+    "verificationStatus": "active",
+    "accountStatus": "active",
+    "createdAt": "2026-04-03T16:00:00.000Z",
+    "updatedAt": "2026-04-03T16:00:00.000Z",
+    "resetPasswordToken": null,
+    "resetPasswordExpire": null
   }
 ]

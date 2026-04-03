@@ -1,17 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Timer, AlertTriangle, Clock, Filter } from 'lucide-react';
 import CountdownTimer from '../components/CountdownTimer';
 import StatusChip from '../components/StatusChip';
 
 
-function getTimeStatus(extractedAt, maxStorageHours) {
-  if (!extractedAt || !maxStorageHours) return 'safe';
+function getTimeStatus(extractedAt, maxStorageMinutes, now) {
+  if (!extractedAt) return 'safe';
+  const finalMaxMinutes = maxStorageMinutes || 0;
   const extracted = new Date(extractedAt).getTime();
   if (isNaN(extracted)) return 'safe';
   
-  const expiry = extracted + maxStorageHours * 3600000;
-  const remaining = expiry - Date.now();
-  const totalMs = maxStorageHours * 3600000;
+  const expiry = extracted + finalMaxMinutes * 60000;
+  const remaining = expiry - now;
+  const totalMs = finalMaxMinutes * 60000 || 1; 
   const pct = (remaining / totalMs) * 100;
   
   if (remaining <= 0) return 'expired';
@@ -23,20 +24,26 @@ function getTimeStatus(extractedAt, maxStorageHours) {
 export default function TimeoutTracking({ organs = [] }) {
   const [sortBy, setSortBy] = useState('remaining');
   const [filter, setFilter] = useState('all');
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000 * 30);
+    return () => clearInterval(id);
+  }, []);
 
   const organsWithStatus = organs.map(o => ({
     ...o,
-    timeStatus: getTimeStatus(o.extractedAt, o.maxStorageHours),
+    timeStatus: getTimeStatus(o.extractedAt, o.maxStorageMinutes, now),
   }));
 
   const filtered = filter === 'all' ? organsWithStatus : organsWithStatus.filter(o => o.timeStatus === filter);
 
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === 'remaining') {
-      const aExt = (a.extractedAt && !isNaN(new Date(a.extractedAt).getTime())) ? new Date(a.extractedAt).getTime() : Date.now();
-      const bExt = (b.extractedAt && !isNaN(new Date(b.extractedAt).getTime())) ? new Date(b.extractedAt).getTime() : Date.now();
-      const aRem = aExt + (a.maxStorageHours || 0) * 3600000 - Date.now();
-      const bRem = bExt + (b.maxStorageHours || 0) * 3600000 - Date.now();
+      const aExt = (a.extractedAt && !isNaN(new Date(a.extractedAt).getTime())) ? new Date(a.extractedAt).getTime() : now;
+      const bExt = (b.extractedAt && !isNaN(new Date(b.extractedAt).getTime())) ? new Date(b.extractedAt).getTime() : now;
+      const aRem = aExt + (a.maxStorageMinutes || 0) * 60000 - now;
+      const bRem = bExt + (b.maxStorageMinutes || 0) * 60000 - now;
       return aRem - bRem;
     }
     return (a.type || '').localeCompare(b.type || '');
@@ -50,10 +57,10 @@ export default function TimeoutTracking({ organs = [] }) {
   };
 
   const statusColors = {
-    safe: { bg: '#d1fae5', border: '#a7f3d0', text: '#059669', label: 'Safe' },
-    expiring: { bg: '#fef3c7', border: '#fde047', text: '#b45309', label: 'Expiring Soon' },
-    critical: { bg: '#fee2e2', border: '#fca5a5', text: '#b91c1c', label: 'Critical' },
-    expired: { bg: '#f3f4f6', border: '#e5e7eb', text: '#6b7280', label: 'Expired' },
+    safe: { bg: '#dcfce7', border: '#bbf7d0', text: '#166534', label: 'Safe' },
+    expiring: { bg: '#fef3c7', border: '#fde68a', text: '#92400e', label: 'Expiring Soon' },
+    critical: { bg: '#fee2e2', border: '#fecaca', text: '#991b1b', label: 'Critical' },
+    expired: { bg: '#f3f4f6', border: '#e5e7eb', text: '#4b5563', label: 'Expired' },
   };
 
   return (
@@ -134,13 +141,13 @@ export default function TimeoutTracking({ organs = [] }) {
                       <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>Extracted</div>
                       <div style={{ fontWeight: 600, fontSize: 12 }}>{new Date(organ.extractedAt).toLocaleString()}</div>
                     </div>
-                    <div style={{ background: 'var(--surface2)', borderRadius: 8, padding: '8px 12px' }}>
-                      <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>Max Storage</div>
-                      <div style={{ fontWeight: 600, fontSize: 12 }}>{organ.maxStorageHours} hours</div>
+                      <div style={{ background: 'var(--surface2)', borderRadius: 8, padding: '8px 12px' }}>
+                        <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>Max Minutes</div>
+                        <div style={{ fontWeight: 600, fontSize: 12 }}>{organ.maxStorageMinutes}</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <CountdownTimer extractedAt={organ.extractedAt} maxStorageHours={organ.maxStorageHours || 24} />
+                    <CountdownTimer extractedAt={organ.extractedAt} maxStorageMinutes={organ.maxStorageMinutes || (24 * 60)} />
 
                   <div style={{ marginTop: 12, fontSize: 12.5, color: 'var(--text-muted)' }}>
                     {organ.sourceHospital?.name || 'Network Hospital'} &bull; {organ.sourceHospital?.location || 'Unknown Location'}

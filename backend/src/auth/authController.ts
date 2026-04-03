@@ -18,7 +18,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     const { hospitalName, hospitalId, officialEmail, contactPerson, phoneNumber, location, password } = req.body;
 
     // Reject .com emails (except whitelisted test emails)
-    const whitelisted = ['rakotisaigayathri@gmail.com', 'saicharishmajoga@gmail.com'];
+    const whitelisted = ['rakotisaigayathri@gmail.com', 'saicharishmajoga@gmail.com', 'pravallikaramu66@gmail.com', 'pittakalpana88@gmail.com'];
     const emailLower = officialEmail.toLowerCase().trim();
 
     if (emailLower.endsWith('.com') && !whitelisted.includes(emailLower)) {
@@ -83,7 +83,7 @@ export const loginHospital = async (req: Request, res: Response, next: NextFunct
     });
 
     // Demo Mode Bypass: If not found, check if it's a valid institutional/test email
-    const whitelisted = ['rakotisaigayathri@gmail.com', 'saicharishmajoga@gmail.com'];
+    const whitelisted = ['rakotisaigayathri@gmail.com', 'saicharishmajoga@gmail.com', 'pravallikaramu66@gmail.com', 'pittakalpana88@gmail.com'];
     const isInstitutional = officialEmail.endsWith('.org') || officialEmail.endsWith('.edu') || officialEmail.endsWith('.gov') || officialEmail.endsWith('.in');
     
     if (!hospital && (isInstitutional || whitelisted.includes(officialEmail.toLowerCase()))) {

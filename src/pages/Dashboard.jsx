@@ -146,10 +146,10 @@ export default function Dashboard({ onNavigate, organs = [], requests = [], user
               <div key={org.id} style={{ padding: '14px', background: 'var(--surface2)', borderRadius: 10, border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>{org.type}</div>
-                  <StatusChip status={org.status} />
+                  <StatusChip status={org.status} expiry={org.expiryTime} />
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>{org.bloodGroup} &bull; {org.hlaType} &bull; {org.sourceHospital?.name?.split(' ')?.slice(0,2)?.join(' ') || 'Hospital'}</div>
-                <CountdownTimer extractedAt={org.extractedAt} maxStorageHours={org.maxStorageHours} />
+                <CountdownTimer extractedAt={org.extractedAt} maxStorageMinutes={org.maxStorageMinutes} />
               </div>
             )) : (
               <div className="empty-state" style={{ padding: '30px 20px' }}>

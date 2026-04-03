@@ -12,6 +12,9 @@ async function seedEverything() {
   const hashedG = await bcrypt.hash('gayathri8374', 12);
   const hashedC = await bcrypt.hash('charishma123', 12);
 
+  const hashedP = await bcrypt.hash('pravallika66', 12);
+  const hashedK = await bcrypt.hash('kalpana88', 12);
+
   await prisma.hospital.upsert({
     where: { officialEmail: 'rakotisaigayathri@gmail.com' },
     update: {},
@@ -38,6 +41,36 @@ async function seedEverything() {
       phoneNumber: '9123456788',
       location: 'Visakhapatnam, AP',
       password: hashedC,
+      verificationStatus: 'active'
+    }
+  });
+
+  await prisma.hospital.upsert({
+    where: { officialEmail: 'pravallikaramu66@gmail.com' },
+    update: {},
+    create: {
+      hospitalName: 'PRAVALLIKA GENERAL HOSPITAL',
+      hospitalId: 'HOSP-PVL-066',
+      officialEmail: 'pravallikaramu66@gmail.com',
+      contactPerson: 'Pravallika',
+      phoneNumber: '9123456066',
+      location: 'Telangana, IN',
+      password: hashedP,
+      verificationStatus: 'active'
+    }
+  });
+
+  await prisma.hospital.upsert({
+    where: { officialEmail: 'pittakalpana88@gmail.com' },
+    update: {},
+    create: {
+      hospitalName: 'KALPANA MEDICAL CENTER',
+      hospitalId: 'HOSP-KLP-088',
+      officialEmail: 'pittakalpana88@gmail.com',
+      contactPerson: 'Kalpana',
+      phoneNumber: '9123456088',
+      location: 'Andhra Pradesh, IN',
+      password: hashedK,
       verificationStatus: 'active'
     }
   });

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Clock, AlertTriangle } from 'lucide-react';
 
-function getRemainingMs(extractedAt, maxStorageHours) {
+function getRemainingMs(extractedAt, maxStorageMinutes) {
   const extracted = new Date(extractedAt).getTime();
-  const expiry = extracted + maxStorageHours * 3600000;
+  const expiry = extracted + maxStorageMinutes * 60000;
   return expiry - Date.now();
 }
 
@@ -17,18 +17,18 @@ function formatDuration(ms) {
   return { h, m, s, label };
 }
 
-export default function CountdownTimer({ extractedAt, maxStorageHours, compact }) {
-  const [remaining, setRemaining] = useState(() => getRemainingMs(extractedAt, maxStorageHours));
+export default function CountdownTimer({ extractedAt, maxStorageMinutes, compact }) {
+  const [remaining, setRemaining] = useState(() => getRemainingMs(extractedAt, maxStorageMinutes));
 
   useEffect(() => {
     const id = setInterval(() => {
-      setRemaining(getRemainingMs(extractedAt, maxStorageHours));
+      setRemaining(getRemainingMs(extractedAt, maxStorageMinutes));
     }, 1000);
     return () => clearInterval(id);
-  }, [extractedAt, maxStorageHours]);
+  }, [extractedAt, maxStorageMinutes]);
 
   const { label } = formatDuration(remaining);
-  const totalMs = maxStorageHours * 3600000;
+  const totalMs = maxStorageMinutes * 60000;
   const pct = Math.max(0, Math.min(100, (remaining / totalMs) * 100));
   const isExpired = remaining <= 0;
   const isCritical = !isExpired && pct <= 15;

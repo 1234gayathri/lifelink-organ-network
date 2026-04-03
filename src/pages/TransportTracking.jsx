@@ -218,6 +218,8 @@ export default function TransportTracking({ transportRecords = [], setTransportR
                 )}
                 {record.status === 'delivered' ? (
                   <span className="chip chip-success"><span className="chip-dot" />Delivered</span>
+                ) : record.status === 'pending' ? (
+                  <span className="chip chip-warning"><span className="chip-dot" />Pending Dispatch</span>
                 ) : (
                   <span className="chip chip-info"><span className="chip-dot" />In Transit</span>
                 )}

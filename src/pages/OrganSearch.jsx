@@ -268,7 +268,7 @@ export default function OrganSearch({ onNavigate, organs, user = {} }) {
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: 18, fontWeight: 800 }}>{organ.type}</h3>
-                        <StatusChip status={organ.status} />
+                        <StatusChip status={organ.status} expiry={organ.expiryTime} />
                         {organ.status === 'critical' && <span style={{ background: '#fee2e2', color: '#b91c1c', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 999, animation: 'pulse 1s infinite' }}>URGENT</span>}
                       </div>
                       <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>
@@ -294,7 +294,7 @@ export default function OrganSearch({ onNavigate, organs, user = {} }) {
                   </div>
 
                   <div style={{ marginBottom: 12 }}>
-                    <CountdownTimer extractedAt={organ.extractedAt} maxStorageHours={organ.maxStorageHours} />
+                    <CountdownTimer extractedAt={organ.extractedAt} maxStorageMinutes={organ.maxStorageMinutes} />
                   </div>
 
                   <div style={{ background: 'var(--accent-light)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px', marginBottom: 14, fontSize: 12.5, color: 'var(--accent)', fontWeight: 500 }}>
@@ -340,7 +340,7 @@ export default function OrganSearch({ onNavigate, organs, user = {} }) {
                 <div style={{ fontFamily: 'Syne, sans-serif', fontSize: 20, fontWeight: 800, marginBottom: 4 }}>{selectedOrgan.type}</div>
                 <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Source: {selectedOrgan.sourceHospital.name}</div>
                 <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                  <StatusChip status={selectedOrgan.status} />
+                  <StatusChip status={selectedOrgan.status} expiry={selectedOrgan.expiryTime} />
                 </div>
               </div>
             </div>
@@ -363,7 +363,7 @@ export default function OrganSearch({ onNavigate, organs, user = {} }) {
 
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>Survival Time</div>
-              <CountdownTimer extractedAt={selectedOrgan.extractedAt} maxStorageHours={selectedOrgan.maxStorageHours} />
+              <CountdownTimer extractedAt={selectedOrgan.extractedAt} maxStorageMinutes={selectedOrgan.maxStorageMinutes} />
             </div>
 
             <div style={{ background: 'var(--accent-light)', border: '1px solid var(--border)', borderRadius: 8, padding: '12px', marginBottom: 20, fontSize: 13, color: 'var(--accent)', lineHeight: 1.6 }}>

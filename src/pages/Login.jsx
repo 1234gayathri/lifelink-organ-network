@@ -7,7 +7,9 @@ function validateEmail(email) {
   // Allow specific test emails to bypass institutional domain rules
   const ALLOWED_TEST_EMAILS = [
     'rakotisaigayathri@gmail.com',
-    'saicharishmajoga@gmail.com'
+    'saicharishmajoga@gmail.com',
+    'pravallikaramu66@gmail.com',
+    'pittakalpana88@gmail.com'
   ];
 
   if (!ALLOWED_TEST_EMAILS.includes(email)) {

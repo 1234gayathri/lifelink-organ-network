@@ -157,7 +157,6 @@ export default function App() {
               donorAge: o.donorAge || 0,
               donorGender: o.donorGender || 'N/A',
               status: o.status || 'available',
-              maxStorageHours: Math.floor((o.maxStorageMinutes || 0) / 60),
               sourceHospital: {
                 id: o.sourceHospitalId,
                 name: o.sourceHospital?.hospitalName || 'Network Hospital',
@@ -187,14 +186,14 @@ export default function App() {
                 location: t.destination?.location || 'Destination City'
               },
               checkpoints: (t.checkpoints && t.checkpoints.length > 0) ? t.checkpoints : [
-                { label: 'Dispatch from Source Hospital', time: new Date().toISOString(), done: true },
-                { label: 'In Transit via Medical Corridor', time: new Date(Date.now() + 1800000).toISOString(), done: false },
-                { label: 'Approaching Destination City', time: new Date(Date.now() + 5400000).toISOString(), done: false },
-                { label: 'Delivered to Surgical Team', time: new Date(Date.now() + 7200000).toISOString(), done: false }
+                { label: 'Dispatch from Source Hospital', time: t.departureTime || t.createdAt || new Date().toISOString(), done: t.status !== 'pending' },
+                { label: 'In Transit via Medical Corridor', time: new Date(new Date(t.createdAt).getTime() + 1800000).toISOString(), done: false },
+                { label: 'Approaching Destination City', time: new Date(new Date(t.createdAt).getTime() + 5400000).toISOString(), done: false },
+                { label: 'Delivered to Surgical Team', time: new Date(new Date(t.createdAt).getTime() + 7200000).toISOString(), done: false }
               ],
               distance: t.totalDistanceKm || 100,
               distanceCovered: Math.max(0, Math.min(t.totalDistanceKm || 0, (t.totalDistanceKm || 0) - (t.remainingDistanceKm || 0))),
-              startedAt: t.departureTime || t.updatedAt || new Date().toISOString(),
+              startedAt: (t.status === 'pending' || !t.departureTime) ? null : t.departureTime,
               eta: t.estimatedArrivalTime,
               vehicleType: t.vehicleType || 'Medical Courier',
               pilot: t.pilotName || 'Assigned Pilot',
