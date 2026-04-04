@@ -6,6 +6,8 @@ import Modal from '../components/Modal';
 import { ORGAN_TYPES, BLOOD_GROUPS, HLA_TYPES } from '../data/mockData';
 import { useToast, ToastContainer } from '../components/Toast';
 
+import { API_BASE_URL } from '../config';
+
 const INIT = { organType: '', bloodGroup: '', hlaType: '', donorAge: '', donorGender: '', extractedAt: '', storageLife: '', notes: '' };
 
 export default function UpdateAvailability({ organs, setOrgans, user, addNotification }) {
@@ -68,7 +70,7 @@ export default function UpdateAvailability({ organs, setOrgans, user, addNotific
     
     setSubmitting(true);
     try {
-      const response = await fetch('https://lifelink-organ-network.onrender.com/api/organs', {
+      const response = await fetch(`${API_BASE_URL}/organs`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

@@ -119,26 +119,6 @@ export const loginHospital = async (req: Request, res: Response, next: NextFunct
       return next(new AppError('Hospital account is not active or suspended', 403));
     }
 
-    // === SINGLE DEVICE POLICY ===
-    // If an active session already exists for this hospital, BLOCK the new login
-    if (activeSessions.has(hospital.id)) {
-      // Send security alert email to the hospital
-      try {
-        await sendEmail({
-          email: hospital.officialEmail,
-          subject: '⚠️ LifeLink Security Alert: Unauthorized Login Attempt Blocked',
-          message: `Dear ${hospital.hospitalName},\n\nA login attempt was made on your LifeLink account from a new device or browser, but it was BLOCKED because your account is already active on another device.\n\nIf this was not you, please immediately log out from your current device and reset your password.\n\nIf this was you, please log out from your current device first before logging in on another device.\n\nStay safe,\nLifeLink Security Team`
-        });
-      } catch (err) {
-        console.error('Failed to send security alert email', err);
-      }
-
-      return next(new AppError(
-        'This account is already logged in on another device. Simultaneous access is not permitted for security purposes. Please log out from the other device first.',
-        403
-      ));
-    }
-
     const token = signToken(hospital.id, 'hospital');
     activeSessions.set(hospital.id, token);
 

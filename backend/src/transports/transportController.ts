@@ -23,9 +23,14 @@ export const getMyTransports = async (req: Request, res: Response, next: NextFun
       orderBy: { updatedAt: 'desc' }
     });
 
+    const mappedTransports = transports.map(t => ({
+      ...t,
+      checkpoints: typeof t.checkpoints === 'string' ? JSON.parse(t.checkpoints) : []
+    }));
+
     res.status(200).json({
       status: 'success',
-      data: { transports }
+      data: { transports: mappedTransports }
     });
   } catch (error) {
     next(error);
@@ -82,7 +87,7 @@ export const updateCheckpoint = async (req: Request, res: Response, next: NextFu
     const updated = await prisma.transportRecord.update({
       where: { id: id as string },
       data: {
-        checkpoints: checkpoints !== undefined ? checkpoints : transport.checkpoints || undefined,
+        checkpoints: checkpoints !== undefined ? JSON.stringify(checkpoints) : transport.checkpoints || undefined,
         status: status || transport.status,
         currentLatitude: currentLatitude !== undefined ? currentLatitude : transport.currentLatitude,
         currentLongitude: currentLongitude !== undefined ? currentLongitude : transport.currentLongitude,
@@ -98,8 +103,8 @@ export const updateCheckpoint = async (req: Request, res: Response, next: NextFu
     });
 
     // Check if ALL checkpoints are now done → trigger delivery completion
-    const updatedCheckpoints = checkpoints ?? ((transport.checkpoints as any[]) || []);
-    const allDone = updatedCheckpoints.length > 0 && updatedCheckpoints.every((cp: any) => cp.done);
+    const cpToEvaluate = checkpoints ?? (transport.checkpoints ? JSON.parse(transport.checkpoints as string) : []);
+    const allDone = cpToEvaluate.length > 0 && cpToEvaluate.every((cp: any) => cp.done);
 
     if (allDone && transport.status !== 'delivered') {
       // Atomically mark transport delivered, request completed, organ completed

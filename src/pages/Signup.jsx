@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Heart, Eye, EyeOff, AlertCircle, Lock, Mail, Hash, MapPin, Phone, User, Building, CheckCircle, Shield } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 function validateEmail(email) {
   if (!email) return 'Email is required';
@@ -7,7 +8,9 @@ function validateEmail(email) {
   const eClean = email.toLowerCase().trim();
   const ALLOWED_TEST_EMAILS = [
     'rakotisaigayathri@gmail.com',
-    'saicharishmajoga@gmail.com'
+    'saicharishmajoga@gmail.com',
+    'pravallikaramu66@gmail.com',
+    'pittakalpana88@gmail.com'
   ];
 
   if (!ALLOWED_TEST_EMAILS.includes(eClean)) {
@@ -75,7 +78,7 @@ export default function Signup({ onNavigate }) {
     setLoading(true);
 
     try {
-      const response = await fetch('https://lifelink-organ-network.onrender.com/api/auth/hospital/signup', {
+      const response = await fetch(`${API_BASE_URL}/auth/hospital/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

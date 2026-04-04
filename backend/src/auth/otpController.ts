@@ -13,30 +13,46 @@ export const sendOtp = async (req: Request, res: Response, next: NextFunction) =
   try {
     const { email, purpose } = req.body; // purpose: 'signup' or 'login'
 
+    console.log(`\n[OTP Request] Sending to ${email} for ${purpose}...`);
+
     if (!email || !purpose) {
       return next(new AppError('Email and purpose are required', 400));
     }
 
     // Delete any existing unexpired OTPs for this email + purpose
-    await prisma.otp.deleteMany({
-      where: { email, purpose }
-    });
+    try {
+      await prisma.otp.deleteMany({
+        where: { email, purpose }
+      });
+    } catch (dbErr: any) {
+      console.error(`[Prisma OTP Cleanup Error]: ${dbErr.message}`);
+      // Don't crash here - if delete fails, we can still try to create
+    }
 
     // Generate new OTP
     const code = generateOtp();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
     // Store OTP in database
-    await prisma.otp.create({
-      data: { email, code, purpose, expiresAt }
+    try {
+      await prisma.otp.create({
+        data: { email, code, purpose, expiresAt }
+      });
+    } catch (dbErr: any) {
+      console.error(`[Prisma OTP Create Error]: ${dbErr.message}`);
+      return next(new AppError('Database connection error. Please try again.', 500));
+    }
+
+    // Send OTP via email - Fire and forget to avoid Render timeouts
+    sendOtpEmail(email, code, purpose).catch(emailErr => {
+      console.error(`[Background Email Error]: ${emailErr.message}`);
     });
 
-    // Send OTP via email
-    await sendOtpEmail(email, code, purpose);
+    console.log(`\n=================================\n🚨 OTP for ${email}: ${code}\n=================================\n`);
 
     res.status(200).json({
       status: 'success',
-      message: 'OTP sent successfully to your email'
+      message: 'OTP sent successfully to your account'
     });
   } catch (error) {
     next(error);
@@ -52,12 +68,7 @@ export const verifyOtp = async (req: Request, res: Response, next: NextFunction)
       return next(new AppError('Email, code, and purpose are required', 400));
     }
 
-    // Check if it's a demo/test email for 123456 bypass
-    const whitelisted = ['rakotisaigayathri@gmail.com', 'saicharishmajoga@gmail.com'];
-    const isInstitutional = email.endsWith('.org') || email.endsWith('.edu') || email.endsWith('.gov') || email.endsWith('.in');
-    if (code === '123456' && (isInstitutional || whitelisted.includes(email.toLowerCase()))) {
-      return res.status(200).json({ status: 'success', message: 'OTP verified successfully (Demo Bypass)' });
-    }
+    // Removed Demo Bypass: All users must now use the dynamic OTP sent to their email.
 
     // Find the OTP record
     const otpRecord = await prisma.otp.findFirst({
@@ -137,10 +148,7 @@ export const verifyAadharOtp = async (req: Request, res: Response, next: NextFun
     const { aadharNumber, code } = req.body;
     const email = req.user.officialEmail;
 
-    // Demo bypass
-    if (code === '123456') {
-      return res.status(200).json({ status: 'success', message: 'OTP verified successfully (Demo)' });
-    }
+    // Removed Demo Bypass: All users must now use the dynamic OTP sent to their email.
 
     const otpRecord = await prisma.otp.findFirst({
       where: { email, purpose: 'aadhar_verify', verified: false },

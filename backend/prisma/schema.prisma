@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Hospital {
@@ -148,7 +148,7 @@ model TransportRecord {
   vehicleType           String?
   pilotName             String?
   emergencyContact      String?
-  checkpoints           Json?        // Array of {label, done, time}
+  checkpoints           String?      // Array of {label, done, time} stored as string
   updatedAt             DateTime     @updatedAt
   destination           Hospital     @relation("TransportDest", fields: [destinationHospitalId], references: [id])
   organ                 Organ        @relation(fields: [organId], references: [id])

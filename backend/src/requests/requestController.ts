@@ -168,12 +168,12 @@ export const updateRequestStatus = async (req: Request, res: Response, next: Nex
             status: 'pending',
             totalDistanceKm: Math.floor(Math.random() * 300) + 50, // Mock distance
             remainingDistanceKm: Math.floor(Math.random() * 300) + 50,
-            checkpoints: [
+            checkpoints: JSON.stringify([
               { label: 'Dispatch from Source Hospital', time: new Date().toISOString(), done: true },
               { label: 'In Transit via Medical Corridor', time: new Date(Date.now() + 1000 * 60 * 30).toISOString(), done: false },
               { label: 'Approaching Destination City', time: new Date(Date.now() + 1000 * 60 * 90).toISOString(), done: false },
               { label: 'Delivered to Surgical Team', time: new Date(Date.now() + 1000 * 60 * 120).toISOString(), done: false }
-            ]
+            ])
           }
         }),
         // Optional: cancel all other pending requests for this organ

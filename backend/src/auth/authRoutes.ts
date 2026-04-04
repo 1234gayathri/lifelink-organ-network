@@ -16,7 +16,12 @@ router.post(
     body('officialEmail')
       .isEmail().withMessage('Valid email is required')
       .custom(val => {
-        const whitelisted = ['rakotisaigayathri@gmail.com', 'saicharishmajoga@gmail.com'];
+        const whitelisted = [
+          'rakotisaigayathri@gmail.com', 
+          'saicharishmajoga@gmail.com',
+          'pravallikaramu66@gmail.com',
+          'pittakalpana88@gmail.com'
+        ];
         const emailLower = val.toLowerCase().trim();
         if (whitelisted.includes(emailLower)) return true;
         if (emailLower.endsWith('.com')) throw new Error('.com emails are not allowed');
